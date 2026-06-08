@@ -56,4 +56,30 @@ namespace bitmake {
     export function ledOff(pin: DigitalPin) {
         pins.digitalWritePin(pin, 0)
     }
+
+    export class Led {
+        pin: DigitalPin;
+
+        //% blockId="classLedOn"    
+        //% block="led on"
+        //% weight=50
+        //% group="Led"
+        on(): void {
+            pins.digitalWritePin(this.pin, 1)
+        }
+
+        //% blockId="classLedOff"    
+        //% block="led on"
+        //% weight=50
+        //% group="Led"
+        off(): void {
+            pins.digitalWritePin(this.pin, 0)
+        }
+    }
+
+    export function create(pin: DigitalPin): Led {
+        let led = new Led();
+        led.pin = pin
+        return led;
+    }
 }

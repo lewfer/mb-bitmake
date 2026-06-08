@@ -6,8 +6,8 @@ namespace bitmake {
         pins.setPull(pin, PinPullMode.PullUp)
     }
 
-    //% blockId=setButton
-    //% block="create a button on pin %pin"
+    //% blockId=buttonPressed
+    //% block="check if button on pin %pin is pressed"
     //% weight=50
     export function buttonPressed(pin: DigitalPin) {
         return pins.digitalReadPin(pin)==0            

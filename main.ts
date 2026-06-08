@@ -65,12 +65,13 @@ namespace bitmake {
         //% led.defl=ledd
         //% weight=50
         //% group="Led"
+        //% parts="Led"
         on(): void {
             pins.digitalWritePin(this.pin, 1)
         }
 
         //% blockId="classLedOff"    
-        //% block="ledd|led on"
+        //% block="ledd|led off"
         //% weight=50
         //% group="Led"
         off(): void {

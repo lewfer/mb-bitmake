@@ -77,6 +77,10 @@ namespace bitmake {
         }
     }
 
+    //% blockId="led_create" 
+    //% block="Led at pin %pin"
+    //% weight=50
+    //% group="Led"
     export function create(pin: DigitalPin): Led {
         let led = new Led();
         led.pin = pin

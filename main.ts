@@ -33,7 +33,7 @@ namespace bitmake {
         while (pins.digitalReadPin(pin) == 0)
             basic.pause(100)
     }
-
+/*
     //% blockId=setLed
     //% block="led on pin %pin"
     //% weight=50
@@ -56,12 +56,13 @@ namespace bitmake {
     export function ledOff(pin: DigitalPin) {
         pins.digitalWritePin(pin, 0)
     }
-
+*/
     export class Led {
         pin: DigitalPin;
 
         //% blockId="classLedOn"    
-        //% block="led on"
+        //% block="ledd|led on"
+        //% led.defl=ledd
         //% weight=50
         //% group="Led"
         on(): void {
@@ -69,7 +70,7 @@ namespace bitmake {
         }
 
         //% blockId="classLedOff"    
-        //% block="led on"
+        //% block="ledd|led on"
         //% weight=50
         //% group="Led"
         off(): void {

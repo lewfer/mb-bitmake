@@ -1,101 +1,51 @@
+/*
+ * Basic devices in BitMake system
+ */
+
 //% color="#ff7f50" icon="\uf0ad" block="BitMake"
 namespace bitmake {
-/*
-    //% blockId=setButton
-    //% block="button on pin %pin"
-    //% weight=50
-    //% group="Button"
-    export function setButton(pin: DigitalPin) {
-        pins.setPull(pin, PinPullMode.PullUp)
-    }
-
-    //% blockId=buttonPressed
-    //% block="button %pin pressed"
-    //% weight=50
-    //% group="Button"
-    export function buttonPressed(pin: DigitalPin) {
-        return pins.digitalReadPin(pin)==0            
-    }
-
-    //% blockId=buttonWaitForPress
-    //% block="wait for button %pin pressed"
-    //% weight=50
-    //% group="Button"
-    export function buttonWaitForPress(pin: DigitalPin) {
-        while (pins.digitalReadPin(pin) != 0)
-            basic.pause(100)
-    }
-
-    //% blockId=buttonWaitForPress
-    //% block="wait for button %pin released"
-    //% weight=50
-    //% group="Button"
-    export function buttonWaitForRelease(pin: DigitalPin) {
-        while (pins.digitalReadPin(pin) == 0)
-            basic.pause(100)
-    }
-    //% blockId=setLed
-    //% block="led on pin %pin"
-    //% weight=50
-    //% group="Led"
-    export function setLed(pin: DigitalPin) {
-    }
-
-    //% blockId=ledOn
-    //% block="led %pin on"
-    //% weight=50
-    //% group="Led"
-    export function ledOn(pin: DigitalPin) {
-        pins.digitalWritePin(pin, 1)
-    }
-
-    //% blockId=ledOff
-    //% block="led %pin off"
-    //% weight=50
-    //% group="Led"
-    export function ledOff(pin: DigitalPin) {
-        pins.digitalWritePin(pin, 0)
-    }
-*/
+    /* Button
+       ----------------------------------------------------
+    */
     export class Button {
         pin: DigitalPin;
 
-        //% blockId=buttonPressed
+        //% blockId=Button_pressed
         //% block="%button|pressed"
         //% weight=50
         //% group="Button"
-        buttonPressed() {
+        pressed() {
             return pins.digitalReadPin(this.pin) == 0
         }
 
-        //% blockId=buttonNotPressed
+        //% blockId=Button_notPressed
         //% block="%button|not pressed"
         //% weight=50
         //% group="Button"
-        buttonNotPressed() {
+        notPressed() {
             return pins.digitalReadPin(this.pin) == 1
         }
 
-        //% blockId=buttonWaitForPress
+        //% blockId=Button_waitForPress
         //% block="%button|wait for press"
         //% weight=50
         //% group="Button"
-        buttonWaitForPress() {
+        waitForPress() {
             while (pins.digitalReadPin(this.pin) != 0)
                 basic.pause(100)
         }
 
-        //% blockId=buttonWaitForRelease
+        //% blockId=Button_waitForRelease
         //% block="%button|wait for release"
         //% weight=50
         //% group="Button"
-        buttonWaitForRelease() {
+        waitForRelease() {
             while (pins.digitalReadPin(this.pin) == 0)
                 basic.pause(100)
         }
     }
 
-    //% blockId="button_create" 
+    //% blockId="Button_create"
     //% block="Button at pin %pin"
     //% weight=50
     //% group="Button"
@@ -107,27 +57,43 @@ namespace bitmake {
         return button;
     }
 
+
+    /* Led
+       ----------------------------------------------------
+    */
     export class Led {
         pin: DigitalPin;
+        status: number
 
-        //% blockId="led_on"    
-        //% block="%led|led on"
+        //% blockId="Led_on"    
+        //% block="%led|on"
         //% weight=50
         //% group="Led"
         on(): void {
-            pins.digitalWritePin(this.pin, 1)
+            this.status = 1
+            pins.digitalWritePin(this.pin, this.status)
         }
 
-        //% blockId="led_off"    
-        //% block="%led|led off"
+        //% blockId="Led_off"
+        //% block="%led|off"
         //% weight=50
         //% group="Led"
         off(): void {
-            pins.digitalWritePin(this.pin, 0)
+            this.status = 0
+            pins.digitalWritePin(this.pin, this.status)
+        }
+
+        //% blockId="Led_toggle"
+        //% block="%led|toggle"
+        //% weight=50
+        //% group="Led"
+        toggle(): void {
+            this.status = 1 - this.status
+            pins.digitalWritePin(this.pin, this.status)
         }
     }
 
-    //% blockId="led_create" 
+    //% blockId="Led_create"
     //% block="Led at pin %pin"
     //% weight=50
     //% group="Led"
@@ -138,12 +104,88 @@ namespace bitmake {
         return led;
     }
 
+
+    /* DimmableLed
+       ----------------------------------------------------
+    */
+    export class DimmableLed {
+        pin: AnalogPin;
+        value: number
+        rangeFrom: number;
+        rangeTo: number
+
+        private scale() : number {
+            return Math.map(this.value, this.rangeFrom, this.rangeTo, 0, 1023)
+        }
+
+        private unScale(): number {
+            return Math.map(this.value, 0, 1023, this.rangeFrom, this.rangeTo)
+        }
+
+        //% blockId="DimmableLed_on"
+        //% block="%led|on"
+        //% weight=50
+        //% group="Dimmable Led"
+        on(): void {
+            this.value = this.rangeTo
+            pins.analogWritePin(this.pin, 1023)
+        }
+
+        //% blockId="DimmableLed_off"
+        //% block="%led|off"
+        //% weight=50
+        //% group="Dimmable Led"
+        off(): void {
+            this.value = this.rangeFrom
+            pins.analogWritePin(this.pin, 0)
+        }
+
+        //% blockId="DimmableLed_setIntensity"
+        //% block="%led|intensity %value"
+        //% weight=50
+        //% group="Dimmable Led"
+        setIntensity(value: number): void {
+            this.value = value
+            pins.analogWritePin(this.pin, this.scale())
+        }
+
+
+        //% blockId="DimmableLed_toggle"
+        //% block="%led|toggle"
+        //% weight=50
+        //% group="Dimmable Led"
+        toggle(): void {
+            this.value = this.rangeTo - this.value + this.rangeFrom
+            pins.analogWritePin(this.pin, this.scale())
+        }
+    }
+
+    //% blockId="DimmableLed_create"
+    //% block="DimmableLed at pin %pin from $rangeFrom to $rangeTo"
+    //% weight=50
+    //% group="Dimmable Led"
+    //% blockSetVariable=led
+    //% rangeFrom.defl=0
+    //% rangeTo.defl=100
+    export function createDimmableLed(pin: AnalogPin, rangeFrom: number=0, rangeTo: number=100): DimmableLed {
+        let led = new DimmableLed();
+        led.pin = pin
+        led.rangeFrom = rangeFrom;
+        led.rangeTo = rangeTo;
+        return led;
+    }
+
+   
+
+    /* AnalogInput
+       ----------------------------------------------------
+    */
     export class AnalogInput {
         pin: AnalogPin;
         rangeFrom: number;
         rangeTo: number
 
-        //% blockId="analog_input_value"
+        //% blockId="AnalogInput_value"
         //% block="%analog|value"
         //% weight=50
         //% group="AnalogInput"
@@ -153,12 +195,14 @@ namespace bitmake {
         }
     }
 
-    //% blockId="analog_input_create" 
+    //% blockId="AnalogInput_create"
     //% block="AnalogInput at pin %pin from %rangeFrom to %rangeTo"
     //% weight=50
     //% group="AnalogInput"
     //% blockSetVariable=analog
-    export function createAnalogInput(pin: AnalogPin, rangeFrom: number, rangeTo: number): AnalogInput {
+    //% rangeFrom.defl=0
+    //% rangeTo.defl=100
+    export function createAnalogInput(pin: AnalogPin, rangeFrom: number=0, rangeTo: number=100): AnalogInput {
         let anIn = new AnalogInput();
         anIn.pin = pin
         anIn.rangeFrom = rangeFrom;

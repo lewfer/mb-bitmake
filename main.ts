@@ -2,7 +2,7 @@
  * Basic devices in BitMake system
  */
 
-//% color="#ff7f50" icon="\uf0ad" block="BitMake"
+//% color="#FF4500" icon="\uf0ad" block="BitMake"
 namespace bitmake {
     /* Button
        ----------------------------------------------------
